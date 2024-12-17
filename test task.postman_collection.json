@@ -1,0 +1,243 @@
+{
+	"info": {
+		"_postman_id": "b73ec1e5-d27e-49b8-8573-34cef72f0998",
+		"name": "test task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26358025"
+	},
+	"item": [
+		{
+			"name": "positive",
+			"item": [
+				{
+					"name": "Verify GET",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(globals.basicTests)(200);\r",
+									"\r",
+									"pm.test(\"Response contains title field\", function () {\r",
+									"    const jsonResponse = pm.response.json();\r",
+									"    pm.expect(jsonResponse).to.have.property(\"title\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/posts/1",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validate POST",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(globals.basicTests)(201);\r",
+									"pm.test(\"Response contains expected fields\", function () {\r",
+									"    const jsonResponse = pm.response.json();\r",
+									"    pm.expect(jsonResponse).to.have.property(\"title\", pm.collectionVariables.get(\"title\"));\r",
+									"    pm.expect(jsonResponse).to.have.property(\"body\", pm.collectionVariables.get(\"body\"));\r",
+									"    pm.expect(jsonResponse).to.have.property(\"userId\", parseInt(pm.collectionVariables.get(\"userId\")));\r",
+									"    pm.expect(jsonResponse).to.have.property('id');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"{{title}}\",\r\n  \"body\": \"{{body}}\",\r\n  \"userId\": {{userId}}\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/posts",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "negative",
+			"item": [
+				{
+					"name": "Validate POST",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(globals.basicTests)(500);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"{{title}}\",\r\n  \"body\": \"{{body}}\",\r\n  \"userId\": \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/posts",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify GET",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"eval(globals.basicTests)(404);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/posts/$",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"posts",
+								"$"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"postman.setGlobalVariable('basicTests', (statusCode) =>{\r",
+					"    pm.test(`Response time is less 500 ms`, function () {\r",
+					"        pm.expect(pm.response.responseTime).to.be.below(500);\r",
+					"    });\r",
+					"     pm.test(`Status code is ${statusCode}`, function () {\r",
+					"        pm.response.to.have.status(statusCode);\r",
+					"    });\r",
+					"})"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "BASE_URL",
+			"value": "https://jsonplaceholder.typicode.com",
+			"type": "string"
+		},
+		{
+			"key": "title",
+			"value": "foo",
+			"type": "string"
+		},
+		{
+			"key": "body",
+			"value": "bar",
+			"type": "string"
+		},
+		{
+			"key": "userId",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}
